@@ -15,6 +15,39 @@ const config = {
 
   firebase.initializeApp(config);
 
+  // Storing userAuth data in firestore
+
+  export const createUserProfileDocument = async ( userAuth, additionalData) => {
+    // console.log(additionalData); Display name comes as additional data while signing up the user.
+    if(!userAuth) return;
+
+    const userRef = firestore.doc(`users/${userAuth.uid}`); // This gives document reference.
+    const snapShot = await userRef.get(); // This gives document snapshot.
+    
+    // console.log(snapShot);
+    if(!snapShot.exists) {
+        const { displayName, email } = userAuth;
+        //console.log(displayName); displayName at this stage is null while signing up the user.
+        const createdAt = new Date();
+
+        try {
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            })
+        } catch(error) {
+            console.log('Error creatign user', error.message);
+        }
+    }
+
+    return userRef;
+
+  }
+
+  
+
   export const auth = firebase.auth();
   export const firestore = firebase.firestore();
 
