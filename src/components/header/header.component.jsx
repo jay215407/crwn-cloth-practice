@@ -6,6 +6,9 @@ import { connect } from 'react-redux';
 import CartIcon from '../cart-icon/cart-icon.component';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
 import CartDropdown from '../cart-dropdown/cart-dropdown.component';
+import { createStructuredSelector } from 'reselect';
+import { selectCurrentUser } from '../../redux/user/user.selectors';
+import { selectCartHidden } from '../../redux/cart/cart.selectors';
 
 const Header = ({ currentUser, hidden }) => {
     return (
@@ -39,12 +42,24 @@ const Header = ({ currentUser, hidden }) => {
 };
 
 
-const mapStateToProps = ({ user: {currentUser}, cart: {hidden} }) => {
-    return {
-        currentUser,
-        hidden
-    }
-};
+const mapStateToProps = createStructuredSelector({
+    currentUser: selectCurrentUser,
+    hidden: selectCartHidden
+})
+
+// const mapStateToProps = (state) => {
+//     return {
+//         currentUser: selectCurrentUser(state),
+//         hidden: selectCartHidden(state)
+//     }
+// };
+
+// const mapStateToProps = ({ user: {currentUser}, cart: {hidden} }) => {
+//     return {
+//         currentUser,
+//         hidden
+//     }
+// };
 
 // Above is advance syntax for below code.
 // const mapStateToProps = state => {
