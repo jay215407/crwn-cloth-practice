@@ -24,6 +24,10 @@ const config = {
     const userRef = firestore.doc(`users/${userAuth.uid}`); // This gives document reference.
     const snapShot = await userRef.get(); // This gives document snapshot.
     
+    // const collectionRef = firestore.collection('users');
+    // const collectionSnapshot = await collectionRef.get();
+    // console.log({collection : collectionSnapshot.docs.map(doc => console.log(doc.data()))});
+
     // console.log(snapShot);
     if(!snapShot.exists) {
         const { displayName, email } = userAuth;
@@ -44,9 +48,52 @@ const config = {
 
     return userRef;
 
-  }
+  };
+
+//This functions is to add data in fribase
+
+//   export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+//       const collectionRef = firestore.collection(collectionKey);
+//     //   console.log(collectionRef);
+
+//     const batch = firestore.batch();
+
+//     objectsToAdd.forEach(obj => {
+//         const newDocRef = collectionRef.doc();
+//         // console.log(newDocRef);
+
+//         batch.set(newDocRef, obj);
+
+//     })
+
+//     return await batch.commit();
+
+//   };
 
   
+  export const convertCollectionsSnapshotToMap = (collections) => {
+      console.log(collections);
+
+      const transformedCollection = collections.docs.map(doc => {
+          console.log(doc);
+          const { title, items } = doc.data();
+
+          return {
+              routeName: encodeURI(title.toLowerCase()),
+              id: doc.id,
+              title,
+              items
+          };
+      });
+
+    //   console.log(transformedCollection);
+
+    return transformedCollection.reduce((accumulator, collection) =>  {
+        accumulator[collection.title.toLowerCase()] = collection;
+        return accumulator;
+    }, {});
+  };
+
 
   export const auth = firebase.auth();
   export const firestore = firebase.firestore();
