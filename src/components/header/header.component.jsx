@@ -10,8 +10,9 @@ import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCartHidden } from '../../redux/cart/cart.selectors';
 import { HeaderContainer, LogoContainer, OptionsContainer, OptionLink } from './header.styles';
+import { signOutStart } from '../../redux/user/user.actions';
 
-const Header = ({ currentUser, hidden }) => {
+const Header = ({ currentUser, hidden , signOutStart }) => {
     return (
         <HeaderContainer>
             <LogoContainer to="/">
@@ -27,7 +28,8 @@ const Header = ({ currentUser, hidden }) => {
                 </OptionLink>
                 {
                     currentUser ?
-                    <OptionLink as='div' onClick={() =>auth.signOut()} >SIGN OUT</OptionLink>
+                    <OptionLink as='div' onClick={signOutStart} >SIGN OUT</OptionLink>
+                    //<OptionLink as='div' onClick={() =>auth.signOut()} >SIGN OUT</OptionLink> before moving sign out to redux-saga.
                     :
                     <OptionLink to='/signin'>SIGN IN</OptionLink>
                 }
@@ -46,7 +48,13 @@ const Header = ({ currentUser, hidden }) => {
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     hidden: selectCartHidden
+});
+
+const mapDispatchToProps = dispatch => ({
+    signOutStart: () => dispatch(signOutStart())
 })
+
+export default connect(mapStateToProps,mapDispatchToProps)(Header);
 
 // const mapStateToProps = (state) => {
 //     return {
@@ -69,7 +77,7 @@ const mapStateToProps = createStructuredSelector({
 //     }
 // };
 
-export default connect(mapStateToProps)(Header);
+
 
 
 //Old file before converting in styled components

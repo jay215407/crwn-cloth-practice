@@ -1,7 +1,9 @@
 import React from 'react';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
-import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
+// import { auth, createUserProfileDocument } from '../../firebase/firebase.utils'; sive we moved related code to redux-saga.
+import { signUpStart } from '../../redux/user/user.actions';
+import { connect } from 'react-redux';
 
 import './sign-up.styles.scss';
 
@@ -20,30 +22,33 @@ class SignUp extends React.Component {
 
     handleSubmit = async event => {
         event.preventDefault();
-
-        const { displayName, email, password, confirmPassword} = this.state;
-
-        if(password !== confirmPassword) {
-            alert("Password don't match");
-            return;
+        const { signUpStart } = this.props;
+        const { displayName, email, password, confirmPassword } = this.state;
+    
+        if (password !== confirmPassword) {
+          alert("passwords don't match");
+          return;
         }
+    
+        signUpStart({ displayName, email, password });
 
-        try {
+        //Below tr-catch block moved to redux-saga withour this.setState
+        // try {
             
-            const { user } = await auth.createUserWithEmailAndPassword(email, password); // This returns an object.
+        //     const { user } = await auth.createUserWithEmailAndPassword(email, password); // This returns an object.
             
-            await createUserProfileDocument(user, {displayName});
+        //     await createUserProfileDocument(user, {displayName});
             
-            this.setState({
-                displayName: '',
-                email: '',
-                password: '',
-                confirmPassword: ''
-            });
+            // this.setState({
+            //     displayName: '',
+            //     email: '',
+            //     password: '',
+            //     confirmPassword: ''
+            // });
 
-        } catch(error) {
-            console.log(error);
-        }
+        // } catch(error) {
+        //     console.log(error);
+        // }
     };
 
     handleChange = event => {
@@ -103,4 +108,8 @@ class SignUp extends React.Component {
     }
 };
 
-export default SignUp;
+const mapDispatchToProps = dispatch => ({
+    signUpStart: userCredentials => dispatch(signUpStart(userCredentials))
+})
+
+export default connect(null,mapDispatchToProps)(SignUp);
